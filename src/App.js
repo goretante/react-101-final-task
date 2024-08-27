@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import React, { useState } from "react";
+import CharacterCard from "./CharacterCard";
 import './App.css';
+import logo from './logo.png';  // Uvoz slike
 
 function App() {
+  const [character, setCharacter] = useState(null);
+
+  const fetchRandomCharacter = async () => {
+    try {
+      const response = await fetch("https://akabab.github.io/starwars-api/api/all.json");
+      const data = await response.json();
+      const randomCharacter = data[Math.floor(Math.random() * data.length)];
+
+      setCharacter({
+        name: randomCharacter.name,
+        image: randomCharacter.image,
+        height: randomCharacter.height,
+        homeworld: randomCharacter.homeworld,
+        species: randomCharacter.species
+      });
+    } catch (error) {
+      console.error("Error fetching character:", error);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <img src={logo} alt="Star Wars Logo" className="logo" />
+      <button onClick={fetchRandomCharacter}>
+        Generate Character
+      </button>
+      <CharacterCard character={character} />
     </div>
   );
 }
